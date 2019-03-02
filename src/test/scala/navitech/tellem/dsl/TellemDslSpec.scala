@@ -2,26 +2,26 @@ package navitech.tellem.dsl
 
 import org.scalatest._
 
-import scala.collection.mutable
+import navitech.tellem.dsl.TellemSyntax._
 
 class TellemDslSpec extends FlatSpec with Matchers {
 
-  "A Stack" should "pop values in last-in-first-out order" in {
-    //noinspection ScalaDeprecation
-    val stack = new mutable.Stack[Int]
-    stack.push(1)
-    stack.push(2)
+  implicit val in: TellemInput = TellemInput("""{"foo": "bar"}""")
 
-    stack.pop() should be (2)
+  "an input" should "parse" in {
 
-    assert(stack.pop() === 1)
+    val strOpt = "$.somepath".str
+
+    strOpt should not be 'defined
+
+    val intOpt = "$.somepath".int
+
+    intOpt should not be 'defined
+
+    val dblOpt = "$.somepath".dbl
+
+    dblOpt should not be 'defined
+
   }
 
-  it should "throw NoSuchElementException if an empty stack is popped" in {
-    //noinspection ScalaDeprecation
-    val emptyStack = new mutable.Stack[String]
-    assertThrows[NoSuchElementException] {
-      emptyStack.pop()
-    }
-  }
 }
