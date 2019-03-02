@@ -1,5 +1,7 @@
 name := "TellemDsl"
 
+organization := "tech.navicore"
+
 fork := true
 javaOptions in test ++= Seq(
   "-Xms128M", "-Xmx256M",
@@ -14,6 +16,52 @@ parallelExecution in test := false
 version := "1.0"
 
 scalaVersion := "2.12.8"
+val scala211 = "2.11.12"
+val scala212 = "2.12.8"
+
+crossScalaVersions := Seq(scala211, scala212)
+
+homepage := Some(url("https://github.com/navicore/tellem-dsl"))
+
+scmInfo := Some(ScmInfo(url("https://github.com/navicore/tellem-dsl"),
+                            "git@github.com:navicore/tellem-dsl.git"))
+
+developers := List(Developer("navicore",
+                             "Ed Sweeney",
+                             "ed@onextent.com",
+                             url("https://github.com/navicore")))
+licenses += ("MIT", url("https://opensource.org/licenses/MIT"))
+
+import ReleaseTransformations._
+
+releaseCrossBuild := true
+
+releasePublishArtifactsAction := PgpKeys.publishSigned.value // Use publishSigned in publishArtifacts step
+
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  inquireVersions,
+  runClean,
+  runTest,
+  setReleaseVersion,
+  commitReleaseVersion,
+  tagRelease,
+  publishArtifacts,
+  setNextVersion,
+  commitNextVersion,
+  releaseStepCommand("sonatypeReleaseAll"),
+  pushChanges
+)
+
+
+sonatypeProfileName := "tech.navicore"
+useGpg := true
+publishTo := Some(
+  if (isSnapshot.value)
+    Opts.resolver.sonatypeSnapshots
+  else
+    Opts.resolver.sonatypeStaging
+)
 
 libraryDependencies ++=
   Seq(
@@ -22,9 +70,8 @@ libraryDependencies ++=
     "com.typesafe" % "config" % "1.3.3",
     "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
 
-    "org.typelevel" %% "cats-core" % "1.6.0",
-
     "org.scalatest" %% "scalatest" % "3.0.5" % "test"
+
   )
 
 mainClass in assembly := Some("navitech.tellem.dsl.Main")
